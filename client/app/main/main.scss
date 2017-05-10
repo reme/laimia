@@ -1,0 +1,60 @@
+.thing-form {
+  margin: 20px 0;
+}
+
+#banner {
+  border-bottom: none;
+  margin-top: -20px;
+}
+
+#banner h1 {
+  font-size: 50px;
+  line-height: 250px;
+  letter-spacing: -1px;
+}
+#slidebox {
+  height:500rpx;
+  position: relative;
+}
+.hero-unit {
+  position: relative;
+  
+  height:500px;
+  
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+}
+
+.navbar-text {
+  margin-left: 15px;
+}
+
+.productbox {
+  background-color:#ffffff;
+  padding:1px;
+  margin-bottom:0px;
+  box-shadow: 0 2px 2px -3px #999;
+}
+.producttitle {
+  font-weight:bold;
+  padding:0 0 0 0;
+}
+
+.featurebox {
+  background-color:#ffffff;
+  padding:1px;
+  margin-top:10px;
+  box-shadow: 0 2px 2px -3px #999;
+}
+
+@media (min-width: 992px) {
+  .productdescription {
+    height: 100px;
+    overflow: hiden;
+  }
+
+  .thumbnail img{
+    height: 180px;
+  }
+}

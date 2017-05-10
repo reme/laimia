@@ -1,0 +1,35 @@
+<navbar></navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-sm-10 col-xs-12">
+      <div class="thumbnail productbox">
+        <div class="">
+          <a ui-sref="viewProduct({id: product._id})">
+            <img src="/assets/uploads/{{product.picture}}" alt="{{product.name}}" class="img-responsive">
+            <div class="producttitle">{{product.name}}</div>
+          </a>
+
+          <p>{{product.description}}</p>
+        </div>
+
+        <div class="productprice">
+          <div class="pull-right">
+            <a  ui-sref="editProduct({id: product._id})" class="btn btn-default btn-sm" role="button">编辑</a>
+            <a  class="btn btn-default btn-sm" ng-click="deleteProduct()">删除</a>
+          </div>
+          <div class="pricetext">{{product.price | currency }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="container col-md-2 col-sm-2">
+      <h3>分类标签</h3>
+      <div  ng-repeat="catalog in product.Catalogs">
+        <br>
+        <h5 class="text-center">{{catalog.name}}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer></footer>

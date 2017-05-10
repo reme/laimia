@@ -1,0 +1,5 @@
+1、get shopdata from shopid.json;
+2、update shopdata every time update shop/food/catalog;
+
+1、add shopinfo to user
+2、user add catalog when update product

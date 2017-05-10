@@ -1,0 +1,47 @@
+<navbar></navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">菜品 <small>{{query}}</small></h1>
+      <div class="col-md-3" ><a ui-sref="newProduct"> 添加菜品</a></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3" ng-include="'components/sidebar/sidebar.html'"></div>
+    <div class="col-md-3" ng-show="products.length < 1">没有菜品.</div>
+    <div class="col-md-4" ng-repeat="product in productsPages[currentPage-1]">
+
+      <div class="thumbnail productbox">
+        <div class="productdescription">
+          <a ui-sref="viewProduct({id: product._id})">
+            <img src="/assets/uploads/{{product.picture}}" alt="{{product.name}}" class="img-responsive">
+            <div class="producttitle">{{product.name}}</div>
+          </a>
+
+          <p>{{product.description}}</p>
+        </div>
+
+        <div class="productprice">
+          <div class="pull-right">
+            <div class="pull-right">
+            <a  ui-sref="editProduct({id: product._id})" class="btn btn-default btn-sm" role="button">编辑</a>
+            <a  class="btn btn-default btn-sm" ng-click="deleteProduct()">删除</a>
+          </div>
+          </div>
+          <div class="pricetext">{{product.price | currency }}</div>
+        </div>
+      </div>
+     
+    </div>
+     
+  
+  </div>
+  <section class="row">  
+        <section  class="col-md-8" style="margin:40px auto; float:none; background:#fff; padding:30px;">  
+            <pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" previous-text="上一页" next-text="下一页"></pagination> 
+        </section>  
+      </section>  
+</div>
+
+<footer></footer>
