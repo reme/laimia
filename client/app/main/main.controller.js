@@ -11,7 +11,7 @@ angular.module('foodApp')
 
     $http.get('/api/things').success(function(awesomeThings) {
       $scope.allThings = awesomeThings;
-      $scope.awesomeThings = $scope.allThings.slice(0,3);
+      $scope.awesomeThings = $scope.allThings.slice(0,4);
       socket.syncUpdates('thing', $scope.awesomeThings);
     });
 
@@ -19,13 +19,13 @@ angular.module('foodApp')
       $scope.position++;
       var l = $scope.allThings.length
       var end = 0;
-      if($scope.position*3+3>l)
+      if($scope.position*4+4>l)
       {
         end=l-1;
       }
       else
       {
-        end = $scope.position*3+3;
+        end = $scope.position*4+4;
       }
       $scope.awesomeThings = $scope.allThings.slice(0,end);
     }

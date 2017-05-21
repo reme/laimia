@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('foodApp')
-  .controller('ProductsCtrl', function ($scope, $http,Auth) {
+  .controller('ProductsCtrl', function ($scope, $state,Product,socket,$http,Auth) {
     $scope.maxSize = 10;     
     $scope.currentPage = 1;  
     $scope.productsPages = []; 
@@ -20,51 +20,47 @@ angular.module('foodApp')
                     $scope.productsPages.push(products.slice(i,i+9))
                 }
             $scope.products = products;
+            console.log("products:",products);
+            socket.syncUpdates('product', $scope.products,function(event,product,products){
+              console.log("event:",event);
+              if(event=="deleted"){
+                $scope.productsPages=[];
+              for(var i=0;i<products.length;i+=9){
+                $scope.productsPages.push(products.slice(i,i+9))
+              }
+                console.log("paged:",$scope.productsPages);
+              }
+            });
       });
     }) .catch(function(err) {
           err = err.data;
           $scope.errors = {};
           $state.go('main');
     });
-  })
-    /*var currentUser = '';
-    Auth.getCurrentUser(function(user){
-      currentUser = user.name;
-      console.log("user:",user.name);
-    //$http.get('/api/products')
-      $http({
-        method:'GET',
-        url:'/api/products',
-        params:{
-              'user':currentUser
-          }
-        }).success(function(products) {
-            $scope.totalItems = products.length;
-            for(var i=0;i<products.length;i+=9){
-                    $scope.productsPages.push(products.slice(i,i+9))
-                }
 
-            $scope.products = products;
-      });   
-    }) .catch(function(err) {
-          err = err.data;
-          $scope.errors = {};
-          $state.go('main');
+    $scope.$on('$destroy', function() {
+      socket.unsyncUpdates('product');
     });
+    $scope.deleteProduct = function(productid){
+      Product.delete({id: productid}, function success(/* value, responseHeaders */) {
+         // pageProducts($scope.products);
+      }, errorHandler($scope));
+    };
+
   })
-  */
+
   .controller('ProductCatalogCtrl', function ($scope, $stateParams, Product) {
     $scope.products = Product.catalog({id: $stateParams.slug});
     $scope.query = $stateParams.slug;
   })
 
-  .controller('ProductViewCtrl', function ($scope, $state, $stateParams, $http, Auth) {
+  .controller('ProductViewCtrl', function ($scope, $state,Product, $stateParams, $http, Auth) {
     console.log("id:",$stateParams.id);
     $http.get('/api/products/' + $stateParams.id).success(function(product){
       console.log("product",product);
       $scope.product = product;
     });
-    
+    console.log("product:",$scope.product);
   
     $scope.user = Auth.getCurrentUser();
     $scope.deleteProduct = function(){
@@ -74,49 +70,122 @@ angular.module('foodApp')
     };
   })
 
-  .controller('ProductNewCtrl', function ($scope, $state, Product) {
+  .controller('ProductNewCtrl', function ($scope, $state, Product,$http,socket,Upload,Auth, $timeout) {
     $scope.product = {}; // create a new instance
-    $scope.addProduct = function(){
-      return Product.save($scope.product).$promise.then(function (product) {
-        return Product.upload($scope.product.picture, product._id);
-      }).then(function (product) {
-        $state.go('viewProduct', {id: product._id});
-      }).catch(errorHandler($scope));
+
+     Auth.getCurrentUser(function(user){
+      $http({
+        method:'GET',
+        url:'/api/catalogs',
+        params:{
+          'shopId':user.Shops[0]._id
+        }
+      }).success(function(catalogs){
+        $scope.catalogs = catalogs;
+      for(var i=0;i<catalogs.length;i++)
+      {
+          $scope.catalogs[i].select=false;
+      }
+        socket.syncUpdates('catalogs', $scope.catalogs);
+        
+      }).error(function(err){
+          console.log("err:",err);
+      });
+    });
+     $scope.deleteCatalog = function(catalog) {
+      $http.delete('/api/catalogs/' + catalog._id);
     };
+
+    $scope.$on('$destroy', function() {
+      socket.unsyncUpdates('catalogs');
+    });
+
+   $scope.addCatalog = function() {
+    console.log("newCatalog:",$scope.newCatalog);
+      if ($scope.newCatalog === '') {
+        return;
+      }
+      Auth.getCurrentUser(function(user){
+       
+        $http.post('/api/catalogs', { name: $scope.newCatalog,shopId:user.Shops[0]._id });
+        $scope.newCatalog = '';
+
+    });
+  };
+    $scope.addProduct = function(){
+      Auth.getCurrentUser(function(user){ var tempCatalogs=[];
+      for(var i=0;i<$scope.catalogs.length;i++){
+        if($scope.catalogs[i].select){
+          delete $scope.catalogs[i].select;
+          tempCatalogs.push($scope.catalogs[i]);
+        }
+      }
+        $scope.product.Catalogs=tempCatalogs;
+
+        $scope.product.shopid=user.Shops[0]._id;
+        return Product.save($scope.product).$promise.then(function (product) {
+          
+          return Product.upload($scope.product.upPicture, product._id);
+            }).then(function (product) {
+              $state.go('viewProduct', {id: product._id});
+              
+            }).catch(errorHandler($scope));
+        });
+      };
   })
 
-  .controller('ProductEditCtrl', function ($scope, $state, $stateParams,Product, $http, Upload, $timeout) {  
+  .controller('ProductEditCtrl', function ($scope, $state, $stateParams,Product,socket,Auth,$http, Upload, $timeout) {  
     $http.get('/api/products/' + $stateParams.id).success(function(product){
       $scope.product = product;
-      console.log("scope.product:",$scope.product);
-      $http.get('/api/catalogs/').success(function(catalog) {
-      $scope.catalogs = catalog;
-      for(var i=0;i<catalog.length;i++)
+
+      Auth.getCurrentUser(function(user){
+      $http({
+        method:'GET',
+        url:'/api/catalogs',
+        params:{
+          'shopId':user.Shops[0]._id
+        }
+      }).success(function(catalogs){
+        $scope.catalogs = catalogs;
+      for(var i=0;i<catalogs.length;i++)
       {
           $scope.catalogs[i].select=false;
           for(var j=0;j<$scope.product.Catalogs.length;j++)
-            if($scope.product.Catalogs[j]._id==catalog[i]._id){
+            if($scope.product.Catalogs[j]._id==catalogs[i]._id)
+            {
                 $scope.catalogs[i].select=true;
                 break;
               } 
       }
-        console.log("catalogs:",catalog);
+        console.log("catalogs:",catalogs);
+        socket.syncUpdates('catalogs', $scope.catalogs);
 
       }).error(function(err){
           console.log("err:",err);
       });
     });
-     $scope.updateSelection = function($event,id){  
-      /*  var checkbox = $event.target ;  
-        var checked = checkbox.checked ;  
-        if(checked){  
-            $scope.selected.push(id) ;  
-        }else{  
-            var idx = $scope.selected.indexOf(id) ;  
-            $scope.selected.splice(idx,1) ;  
-        }*/  
-    }; 
-    $scope.editProduct = function(){
+  });
+
+    $scope.deleteCatalog = function(catalog) {
+      $http.delete('/api/catalogs/' + catalog._id);
+    };
+
+    $scope.$on('$destroy', function() {
+      socket.unsyncUpdates('catalogs');
+    });
+
+   $scope.addCatalog = function() {
+      console.log("newCatalog:",$scope.newCatalog);
+      if ($scope.newCatalog === '') {
+        return;
+      }
+      Auth.getCurrentUser(function(user){
+      $http.post('/api/catalogs', { name: $scope.newCatalog,shopId:user.Shops[0]._id });
+      $scope.newCatalog = '';
+
+    });
+  };
+    $scope.action = function(){
       var tempCatalogs=[];
       for(var i=0;i<$scope.catalogs.length;i++){
         if($scope.catalogs[i].select){

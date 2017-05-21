@@ -13,6 +13,7 @@ var _ = require('lodash');
 var sqldb = require('../../sqldb');
 var Product = sqldb.Product;
 var path = require('path');
+var fs = require('fs');
 function handleError(res, statusCode) {
   
   statusCode = statusCode || 500;
@@ -26,7 +27,6 @@ function responseWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
     if (entity) {
-      console.log("entity:",entity);
       res.status(statusCode).json(entity);
     }
   };
@@ -53,15 +53,12 @@ function saveUpdates(updates) {
           }
         }).then(function(){
           var newFoodCatalogs=[];
-          console.log("updates:",updates);
         for(var i=0; i<updates.Catalogs.length;i++){
            var temp = {};
-           console.log("updated._id:",updated._id);
            temp.ProductId=updated._id;
            temp.CatalogId=updates.Catalogs[i]._id;
            newFoodCatalogs.push(temp);
           }
-          console.log("newFoodCatalogs:",newFoodCatalogs);
           sqldb.FoodCatalogs.bulkCreate(newFoodCatalogs,{fields:['ProductId','CatalogId']})
           .error(function(err){
             console.log("error:",err);
@@ -72,6 +69,25 @@ function saveUpdates(updates) {
   };
 }
 
+function saveCatalog(rowData){
+  return function(entity){
+   var newFoodCatalogs=[];
+     for(var i=0; i<rowData.Catalogs.length;i++){
+           var temp = {};
+           temp.ProductId=entity._id;
+           temp.CatalogId=rowData.Catalogs[i]._id;
+           newFoodCatalogs.push(temp);
+          }
+          sqldb.FoodCatalogs.bulkCreate(newFoodCatalogs,{fields:['ProductId','CatalogId']})
+          .then(function(foodCatalogs){
+            return entity;
+          })
+          .error(function(err){
+            console.log("error:",err);
+          });
+        return entity;
+  }
+}
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
@@ -85,18 +101,34 @@ function removeEntity(res) {
 
 function saveFile(res, file) {
   return function(entity){
-    //var newPath = '/assets/uploads/' + path.basename(file.path);
+   var newfilePath = 'client/assets/uploads/shop' + entity.shopid +'/'+ path.basename(file.path);
+    console.log("newPath:",newfilePath);
+    fs.rename(file.path,newfilePath,function(err){
+      if (err) { 
+        console.log("err:",err);
+    }
+    var oldfile='client/assets/uploads/shop'+entity.shopid+'/'+entity.picture;
+    console.log("oldfile:",oldfile);
+    fs.exists(oldfile,function(exists){
+      if(exists){
+        fs.unlink(oldfile,function(err){
+          console.log("remove old file");
+        })
+      }
+    });
     entity.picture = path.basename(file.path);
     return entity.save()
-          .then(function() {
-            res.status(204).end();
+          .then(function(productSaved) {
+            console.log("productSaved:",productSaved);
+            res.status(201).json(productSaved);
           });
-     }  
+     })  
   }
+}
 
 // Gets a list of Products
 exports.index = function(req, res) {
-  console.log("reqest:",req.query['user']);
+  
   sqldb.Product.findAll({
         where:{
           shopId:req.query['shopId']
@@ -104,33 +136,10 @@ exports.index = function(req, res) {
       }).then(responseWithResult(res))
         .catch(handleError(res));
     };
-  /*sqldb.User.findAll({
-    where:{
-      name:req.query['user']
-    }
-  }).then(function(users){
-    sqldb.UserShop.findAll({
-      where:{
-        userId:users[0]._id
-      }
-    }).then(function(usershops){
-      console.log("usershops:",usershops[0].shopId);
-      sqldb.Product.findAll({
-        where:{
-          shopId:usershops[0].shopId
-        }
-      }).then(responseWithResult(res))
-        .catch(handleError(res));
-    });
-  });
- Product.findAll()
-    .then(responseWithResult(res))
-    .catch(handleError(res));
-};*/
 exports.catalog = function(req,res){
   console.log("query:",req.params.id);
   sqldb.Product.findById(req.params.id,{
-    'include':[sqldb.Catalog]
+    'include':[sqldb.Catalogs]
   }).then(responseWithResult(res))
     .catch(handleError(res));
     
@@ -140,7 +149,7 @@ exports.catalog = function(req,res){
 // Gets a single Product from the DB
 exports.show = function(req, res) {
   sqldb.Product.findById(req.params.id,{
-    'include':[sqldb.Catalog]
+    'include':[sqldb.Catalogs]
   }).then(handleEntityNotFound(res))
     .then(responseWithResult(res))
     .catch(handleError(res));
@@ -150,6 +159,7 @@ exports.show = function(req, res) {
 // Creates a new Product in the DB
 exports.create = function(req, res) {
   Product.create(req.body)
+    .then(saveCatalog(req.body))
     .then(responseWithResult(res, 201))
     .catch(handleError(res));
 };

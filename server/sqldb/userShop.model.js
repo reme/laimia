@@ -4,7 +4,7 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('userShop', {
    role:{
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       defaultValue:'member'
     },
     level:DataTypes.INTEGER,

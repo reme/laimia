@@ -8,8 +8,11 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    name: DataTypes.STRING,
-    info: DataTypes.STRING,
-    active: DataTypes.BOOLEAN
+    name: {
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    shopId: DataTypes.INTEGER,
+    classid:DataTypes.STRING
   });
 };

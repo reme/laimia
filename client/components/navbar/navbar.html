@@ -49,18 +49,18 @@
     <div collapse="isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
         <li ng-repeat="item in menu" ui-sref-active="active">
-            <a ui-sref="{{item.state}}"><i class="fa fa-{{item.icon}}"></i> {{item.title}}</a>
+            <a ui-sref="{{item.state}}"><i class="glyphicon {{item.icon}}"></i> {{item.title}}</a>
         </li>
-         <li ng-show="isAdmin()" ui-sref-active="active"><a ui-sref="admin">Admin</a></li>
+         <li ng-show="isAdmin()" ui-sref-active="active"><a ui-sref="admin"><span class="glyphicon glyphicon-wrench"></span>管理</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li ng-hide="isLoggedIn()" ui-sref-active="active"><a ui-sref="signup"><span class="glyphicon glyphicon-registration-mark"></span>注册</a></li>
+        <!--li ng-hide="isLoggedIn()" ui-sref-active="active"><a ui-sref="signup"><span class="glyphicon glyphicon-registration-mark"></span>注册</a></li-->
         <li ng-hide="isLoggedIn()" ui-sref-active="active"><a ui-sref="login"><span class="glyphicon glyphicon-log-in"></span>登陆</a></li>
         <li ng-show="isLoggedIn()"><p class="navbar-text"><span class="glyphicon glyphicon-user">你好 {{ getCurrentUser().name }}</p> </li>
          <li ng-show="isLoggedIn()" class="dropdown" dropdown on-toggle="toggled(open)" ui-sref-active="active"><a href class="dropdown-toggle glyphicon glyphicon-cog" dropdown-toggle>设置</a>
             <ul class="dropdown-menu">
               <li ng-repeat="choice in items">
-                  <a href>{{choice}}</a>
+                  <a ui-sref="{{choice.state}}"><i class="glyphicon {{choice.icon}}"></i> {{choice.title}}</a>
               </li>
             </ul>
          </li>

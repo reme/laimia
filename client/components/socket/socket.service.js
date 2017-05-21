@@ -38,7 +38,7 @@ angular.module('foodApp')
           var oldItem = _.find(array, {_id: item._id});
           var index = array.indexOf(oldItem);
           var event = 'created';
-
+          console.log("item in save event:",item);
           // replace oldItem if it exists
           // otherwise just add item to the collection
           if (oldItem) {
@@ -56,6 +56,8 @@ angular.module('foodApp')
          */
         socket.on(modelName + ':remove', function (item) {
           var event = 'deleted';
+          console.log("item in remove event:",item);
+          console.log("item removed from :", array);
           _.remove(array, {_id: item._id});
           cb(event, item, array);
         });

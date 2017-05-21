@@ -5,7 +5,7 @@
 'use strict';
 
 var EventEmitter = require('events').EventEmitter;
-var Shops = require('../../sqldb').Shops;
+var Shops = require('../../sqldb').Shop;
 var ShopsEvents = new EventEmitter();
 
 // Set max event listeners (0 == unlimited)

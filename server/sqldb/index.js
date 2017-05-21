@@ -17,13 +17,13 @@ var db = {
 
 // Insert models below
 db.Catalogs = db.sequelize.import('../api/catalogs/catalogs.model');
-db.Shops = db.sequelize.import('../api/shops/shops.model');
+db.Shop = db.sequelize.import('../api/shops/shops.model');
 db.Catalog = db.sequelize.import('../api/catalog/catalog.model');
 db.Thing = db.sequelize.import('../api/thing/thing.model');
 
 db.Product = db.sequelize.import('../api/product/product.model');
 db.User = db.sequelize.import('../api/user/user.model');
-db.Shop = db.sequelize.import('./shop.model');
+//db.Shop = db.sequelize.import('./shop.model');
 db.OrderItem = db.sequelize.import('./OrderItem.model');
 db.MenuOrder = db.sequelize.import('./menuOrder.model');
 db.Catalog = db.sequelize.import('../api/catalog/catalog.model');
@@ -44,9 +44,9 @@ db.MenuOrder.belongsTo(db.Shop,{as:'orderShop',foreignKey:'shopId'});
 db.Room.belongsTo(db.Shop,{as:'Shop',foreignKey:'shopId'});
 db.OrderItem.belongsTo(db.MenuOrder,{as:'menuOrder',foreignKey:'orderId'});
 db.OrderItem.belongsTo(db.Product,{as:'orderFood',foreignKey:'foodId'});
-db.Catalog.belongsTo(db.Shop,{as:'catalogShop',foreignKey:'shopId'});
-db.Product.belongsToMany(db.Catalog,{through: FoodCatalogs});
-db.Catalog.belongsToMany(db.Product,{through: FoodCatalogs});
+db.Catalogs.belongsTo(db.Shop,{as:'catalogShop',foreignKey:'shopId'});
+db.Product.belongsToMany(db.Catalogs,{through: FoodCatalogs});
+db.Catalogs.belongsToMany(db.Product,{through: FoodCatalogs});
 
 module.exports = db;
 

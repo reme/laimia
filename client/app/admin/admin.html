@@ -1,7 +1,12 @@
 <navbar></navbar>
 
 <div class="container">
-  <p>The delete user and user index api routes are restricted to users with the 'admin' role.</p>
+  <h3>管理用户</h3>
+  <div class="row">
+  	<div class="pull-left">
+        <a class="btn btn-default btn-md col-md-offset-2" role="button" ui-sref="signup"> 添加用户</a>
+  	</div>
+  </div>
   <ul class="list-group">
     <li class="list-group-item" ng-repeat="user in users">
         <strong>{{user.name}}</strong><br>

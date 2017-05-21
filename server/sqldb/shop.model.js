@@ -1,7 +1,5 @@
 'use strict';
 
-var crypto = require('crypto');
-
 var validatePresenceOf = function(value) {
   return value && value.length;
 };
@@ -35,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
       profile: function() {
         return {
           'name': this.name,
-          'role': this.phone
+          'address': this.shopaddress
         };
       },
     },

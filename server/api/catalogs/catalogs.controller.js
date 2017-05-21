@@ -10,6 +10,7 @@
 'use strict';
 
 var _ = require('lodash');
+var py = require('pinyin');
 var sqldb = require('../../sqldb');
 var Catalogs = sqldb.Catalogs;
 
@@ -24,6 +25,7 @@ function responseWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
     if (entity) {
+      
       res.status(statusCode).json(entity);
     }
   };
@@ -61,11 +63,14 @@ function removeEntity(res) {
 
 // Gets a list of Catalogss
 exports.index = function(req, res) {
-  Catalogs.findAll()
+  Catalogs.findAll({
+        where:{
+          shopId:req.query['shopId']
+        }
+      })
     .then(responseWithResult(res))
     .catch(handleError(res));
 };
-
 // Gets a single Catalogs from the DB
 exports.show = function(req, res) {
   Catalogs.find({
@@ -80,7 +85,11 @@ exports.show = function(req, res) {
 
 // Creates a new Catalogs in the DB
 exports.create = function(req, res) {
-  Catalogs.create(req.body)
+  console.log("body:",req.body);
+  var data=req.body;
+  var classid = py(data.name,{style:py.STYLE_NORMAL,heteronym:false}).join('');
+  data.classid=classid;
+  Catalogs.create(data)
     .then(responseWithResult(res, 201))
     .catch(handleError(res));
 };

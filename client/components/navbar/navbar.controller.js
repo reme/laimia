@@ -14,11 +14,17 @@ angular.module('foodApp')
       'login':true
     }];
     
-    $scope.items = [
-    'The first choice!',
-    'And another choice for you.',
-    'but wait! A third!'
-  ];
+    $scope.items = [{
+      'title': '修改密码',
+      'state': 'settings',
+      'icon': 'glyphicon-wrench',
+      'login':true
+    }, {
+      'title': '店铺设置',
+      'state': 'editShop({id: getCurrentUser().Shops[0]._id})',
+      'icon': 'glyphicon-th',
+      'login':true
+    }];
 
   $scope.status = {
     isopen: false

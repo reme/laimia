@@ -16,7 +16,7 @@ angular.module('foodApp')
         })
         .then(function() {
           // Account created, redirect to home
-          $state.go('main');
+          $state.go('newShop');
         })
         .catch(function(err) {
           err = err.data;

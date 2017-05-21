@@ -1,7 +1,8 @@
-<div ng-show="errors" class="alert alert-danger errors" role="alert">
-  <strong>Error(s):</strong>
-  <p>{{errors}}</p>
-</div>
+<div class="container">
+  <div ng-show="errors" class="alert alert-danger errors" role="alert">
+     <strong>Error(s):</strong>
+     <p>{{errors}}</p>
+  </div>
 
 <div class="row">
   <div class="col-md-2 pull-left">
@@ -15,11 +16,11 @@
     <h2 ng-show="product.upPicture">预览</h2>
     <img ngf-src="product.upPicture" width="170px">
     <div ng-show="product.upPicture">{{product.upPicture.$error}} {{product.upPicture.$errorParam}}</div>
-    <img src="/assets/uploads/{{product.uppicture}}" alt="{{product.name}}" class="img-responsive">
+    <img src="/assets/uploads/shop{{product.shopid}}/{{product.uppicture}}" alt="{{product.name}}" class="img-responsive">
   </div>
   <div class="container editbox col-md-7">
      <div ng-show="product.picture"  class="img-thumbnail preview col-md-8 col-md-offset-3">
-            <img src="/assets/uploads/{{product.picture}}" alt="{{product.name}}" class="img-responsive center-block ">
+            <img src="/assets/uploads/shop{{product.shopid}}/{{product.picture}}" alt="{{product.name}}" class="img-responsive center-block ">
       </div>
       <br>
       <div class="clearfix"></div>
@@ -44,14 +45,27 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <input type="submit" class="btn btn-primary" value="保存"/>
+        <input type="submit" class="btn btn-primary" ng-click="action()"value="保存"/>
       </div>
     </div>
   </div>
   <div class="catalogbox col-md-3 pull-right">
      <h3 class="text-center">分类标签</h3>
       <div  ng-repeat="catalog in catalogs">
-       <label class="checkbox-inline pull-right"><input type="checkbox"  ng-click="updateSelection($event,catalog._id)" ng-model="catalog.select">{{catalog.name}}</label>
+       <label class="checkbox-inline pull-right"><input type="checkbox"   ng-model="catalog.select">{{catalog.name}}</label>
       </div> 
+
+      <div class = "catalog-form pull-right">
+       <p class="input-group pull-right">
+         <input type="text" class="form-control" placeholder="添加分类." ng-model="newCatalog">
+         <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary" ng-click="addCatalog()">添加</button>
+         </span>
+       </p>
   </div>
+      
+  </div>
+  
 </div>
+</div>
+ 

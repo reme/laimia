@@ -10,9 +10,9 @@ var path = require('path');
 module.exports = function(app) {
 
   // Insert routes below
-  app.use('/api/catalogss', require('./api/catalogs'));
-  app.use('/api/shopss', require('./api/shops'));
-  app.use('/api/catalogs', require('./api/catalog'));
+  app.use('/api/catalogs', require('./api/catalogs'));
+  app.use('/api/shops', require('./api/shops'));
+  //app.use('/api/catalogs', require('./api/catalog'));
   app.use('/api/products', require('./api/product'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));

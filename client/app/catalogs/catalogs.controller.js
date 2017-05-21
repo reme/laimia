@@ -1,27 +1,36 @@
 'use strict';
 
 angular.module('foodApp')
-  .controller('CatalogCtrl', function($scope, $http, socket) {
+  .controller('CatalogsCtrl', function($scope, $http,Auth, socket) {
     $scope.awesomeThings = [];
 
-    $http.get('/api/things').success(function(awesomeThings) {
-      $scope.awesomeThings = awesomeThings;
-      socket.syncUpdates('thing', $scope.awesomeThings);
+    Auth.getCurrentUser(function(user){
+      $http({
+        method:'GET',
+        url:'/api/catalogs',
+        params:{
+          'shopId':user.Shops[0]._id
+        }
+      }).success(function(catalogs){
+        $scope.awesomeThings = catalogs;
+        socket.syncUpdates('catalogs', $scope.awesomeThings);
+      });
     });
-
     $scope.addThing = function() {
       if ($scope.newThing === '') {
         return;
       }
-      $http.post('/api/things', { name: $scope.newThing });
+      Auth.getCurrentUser(function(user){
+      $http.post('/api/catalogs', { name: $scope.newThing,shopId:user.Shops[0]._id });
       $scope.newThing = '';
-    };
+    });
+  };
 
     $scope.deleteThing = function(thing) {
-      $http.delete('/api/things/' + thing._id);
+      $http.delete('/api/catalogs/' + thing._id);
     };
 
     $scope.$on('$destroy', function() {
-      socket.unsyncUpdates('thing');
+      socket.unsyncUpdates('catalogs');
     });
   });
