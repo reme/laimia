@@ -54,7 +54,7 @@ function saveUpdates(updates) {
 function associateUser(rowData){
   return function(entity){ 
       if(rowData.userId){
-        userShop.create({userId:rowData.userId,shopId:entity._id})
+        userShop.create({userId:rowData.userId,shopId:entity._id,role:'admin'})
           .then(function(userShop){
             console.log("insert UserShop");
             return entity;

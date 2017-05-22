@@ -18,6 +18,8 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/room/room.socket').register(socket);
+  require('../api/preference/preference.socket').register(socket);
   require('../api/catalogs/catalogs.socket').register(socket);
   require('../api/shops/shops.socket').register(socket);
   require('../api/catalog/catalog.socket').register(socket);

@@ -18,6 +18,8 @@ module.exports = function(sequelize, DataTypes) {
     price:DataTypes.REAL,
     shopid:DataTypes.INTEGER,
     sold:DataTypes.INTEGER,
+    discount:DataTypes.REAL,
+    disprice:DataTypes.REAL
     },
     {
       tableName:'food',

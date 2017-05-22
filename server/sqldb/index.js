@@ -16,6 +16,8 @@ var db = {
 };
 
 // Insert models below
+db.Room = db.sequelize.import('../api/room/room.model');
+db.Preference = db.sequelize.import('../api/preference/preference.model');
 db.Catalogs = db.sequelize.import('../api/catalogs/catalogs.model');
 db.Shop = db.sequelize.import('../api/shops/shops.model');
 db.Catalog = db.sequelize.import('../api/catalog/catalog.model');
@@ -23,19 +25,21 @@ db.Thing = db.sequelize.import('../api/thing/thing.model');
 
 db.Product = db.sequelize.import('../api/product/product.model');
 db.User = db.sequelize.import('../api/user/user.model');
-//db.Shop = db.sequelize.import('./shop.model');
+
 db.OrderItem = db.sequelize.import('./OrderItem.model');
 db.MenuOrder = db.sequelize.import('./menuOrder.model');
 db.Catalog = db.sequelize.import('../api/catalog/catalog.model');
-db.Room = db.sequelize.import('./room.model');
-db.Preference = db.sequelize.import('./preference.model');
+
 db.UserShop = db.sequelize.import('./userShop.model');
-//db.FoodCatalog = db.sequelize.import('./foodCatalog.model');
+
 var FoodCatalogs = db.sequelize.define('foodCatalogs', {
   started: Sequelize.BOOLEAN
 });
 db.FoodCatalogs=FoodCatalogs;
 
+db.Preference.belongsTo(db.Shop);
+db.Room.belongsTo(db.Shop,{as:'shoproom',foreignKey:'shopId'});
+db.Preference.belongsTo(db.Product);
 db.User.belongsToMany(db.Shop,{through:db.UserShop,foreignKey:'userId'});
 db.Shop.belongsToMany(db.User,{through:db.UserShop,foreignKey:'shopId'});
 db.MenuOrder.belongsTo(db.User,{as:'orderUser',foreignKey:'userId'});

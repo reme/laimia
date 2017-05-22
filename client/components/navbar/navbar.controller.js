@@ -24,6 +24,11 @@ angular.module('foodApp')
       'state': 'editShop({id: getCurrentUser().Shops[0]._id})',
       'icon': 'glyphicon-th',
       'login':true
+    },{
+      'title': '房间管理',
+      'state': 'room',
+      'icon': 'glyphicon-th',
+      'login':true
     }];
 
   $scope.status = {

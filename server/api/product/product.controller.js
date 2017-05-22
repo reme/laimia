@@ -52,18 +52,20 @@ function saveUpdates(updates) {
             productId:entity._id
           }
         }).then(function(){
-          var newFoodCatalogs=[];
-        for(var i=0; i<updates.Catalogs.length;i++){
-           var temp = {};
-           temp.ProductId=updated._id;
-           temp.CatalogId=updates.Catalogs[i]._id;
-           newFoodCatalogs.push(temp);
-          }
-          sqldb.FoodCatalogs.bulkCreate(newFoodCatalogs,{fields:['ProductId','CatalogId']})
-          .error(function(err){
-            console.log("error:",err);
-          });
-        });
+          if(updates.Catalogs){
+            var newFoodCatalogs=[];
+            for(var i=0; i<updates.Catalogs.length;i++){
+              var temp = {};
+              temp.ProductId=updated._id;
+              temp.CatalogId=updates.Catalogs[i]._id;
+              newFoodCatalogs.push(temp);
+            }
+            sqldb.FoodCatalogs.bulkCreate(newFoodCatalogs,{fields:['ProductId','CatalogId']})
+              .error(function(err){
+              console.log("error:",err);
+            });
+        }
+      });
         return updated;
       });
   };

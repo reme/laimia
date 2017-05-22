@@ -8,8 +8,9 @@ angular.module('foodApp')
       slides.push({ image: '/assets/images/back.png', text: '好吃好卖，好管理！！' });
       slides.push({ image: '/assets/images/shangcai.png', text: '来点菜吧后台管理' });
     $scope.awesomeThings = [];
-
+    console.log("main:");
     $http.get('/api/things').success(function(awesomeThings) {
+      console.log("thins:",awesomeThings);
       $scope.allThings = awesomeThings;
       $scope.awesomeThings = $scope.allThings.slice(0,4);
       socket.syncUpdates('thing', $scope.awesomeThings);
